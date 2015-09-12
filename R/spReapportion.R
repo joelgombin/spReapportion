@@ -11,7 +11,7 @@
 #' @param data_ID a string, the name of the ID variable in the `data`.
 #' @param variables a character vector, representing the names of the variables in the `data` set to reapportion. By default, all data variables except for the ID.
 #' @export
-#' @import sp maptools
+#' @import sp maptools rgeos
 #'
 spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)]) {
 

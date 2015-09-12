@@ -2,4 +2,5 @@
 
 export(spReapportion)
 import(maptools)
+import(rgeos)
 import(sp)

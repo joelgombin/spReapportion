@@ -70,12 +70,12 @@ tm_shape(ParisIris) +
 CS_ParisPollingStations <- CS_ParisPollingStations %>%
   mutate_each(funs(. / C11_POP15P * 100), C11_POP15P_CS1:C11_POP15P_CS8)
 
-ParisPollingStations2012 <- append_data(ParisPollingStations2012, CS_ParisPollingStations, key.shp = "ID", key.data = "new_ID")
+ParisPollingStations2012 <- append_data(ParisPollingStations2012, CS_ParisPollingStations, key.shp = "ID", key.data = "ID")
 #> Keys match perfectly.
 
 tm_shape(ParisPollingStations2012) +
   tm_fill(col = "C11_POP15P_CS3", palette = "Blues", style = "quantile", n = 6, title = "Independent workers") +
-  tm_shape(ParisIris) +
+  tm_shape(ParisIris, is.master = TRUE) +
   tm_borders()
 ```
 

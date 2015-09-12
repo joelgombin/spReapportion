@@ -3,4 +3,7 @@
 language: r
 warnings_are_errors: true
 sudo: required
-r_binary_packages: r-cran-sp, r-cran-maptools, r-cran-plyr
+r_binary_packages:
+  - r-cran-sp
+  - r-cran-maptools
+  - r-cran-plyr

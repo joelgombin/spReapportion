@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/joelgombin/spReapportion.svg)](https://travis-ci.org/joelgombin/spReapportion)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 This (very small) package provides a function to reapportionate data from one set of spatial polygons to another. This is useful, e.g., when one has some data which is distributed in some administrative units (e.g., the IRIS, the infra-urban unit at which the INSEE, the French national statistics institute, releases the census data) and needs to have it in some other units (e.g., "bureaux de vote", the French polling stations).
 

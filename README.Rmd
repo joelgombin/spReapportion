@@ -4,6 +4,8 @@ output:
     variant: markdown_github
 ---
 
+[![Build Status](https://travis-ci.org/joelgombin/spReapportion.svg)](https://travis-ci.org/joelgombin/spReapportion)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}

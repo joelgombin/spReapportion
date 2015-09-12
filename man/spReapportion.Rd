@@ -4,7 +4,8 @@
 \alias{spReapportion}
 \title{Reapportion data from one geography to another}
 \usage{
-spReapportion(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables)
+spReapportion(old_geom, new_geom, data, old_ID, new_ID, data_ID,
+  variables = names(data)[-which(names(data) \%in\% data_ID)])
 }
 \arguments{
 \item{old_geom}{a \code{SpatialPolygonsDataFrame} representing the initial geometry.}

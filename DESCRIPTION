@@ -7,5 +7,6 @@ Maintainer: Joel Gombin <joel.gombin@gmail.com>
 Description: This package provides tools to reapportion data from one geography to another, for example in the context of working with different administrative units.
 License: GPL
 LazyData: TRUE
+Depends: R (>= 2.10)
 Imports: sp, rgeos, maptools, plyr
 Suggests: testthat

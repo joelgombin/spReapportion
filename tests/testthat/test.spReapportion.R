@@ -1,7 +1,8 @@
 library(spReapportion)
-# skip_on_cran()
+#
 
 test_that("spReapportion reapportions data correctly", {
+  skip_on_cran()
   data(ParisPollingStations2012)
   data(ParisIris)
   data(RP_2011_CS8_Paris)

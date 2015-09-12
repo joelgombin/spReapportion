@@ -1,0 +1,7 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^NEWS\.md$
+^TODO\.md$
+^README\.Rmd$
+^README-.*\.png$

@@ -11,7 +11,7 @@
 #' @param data_ID a string, the name of the ID variable in the `data`.
 #' @param variables a character vector, representing the names of the variables in the `data` set to reapportion. By default, all data variables except for the ID.
 #' @export
-#' @import sp
+#' @import sp rgeos
 #'
 spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)]) {
 
@@ -40,12 +40,12 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
 
   # start by trimming out areas that don't intersect
 
-  old_geom_sub <- rgeos::gIntersects(old_geom, new_geom, byid=TRUE) # test for areas that don't intersect
+  old_geom_sub <- gIntersects(old_geom, new_geom, byid=TRUE) # test for areas that don't intersect
   old_geom_sub2 <- apply(old_geom_sub, 2, function(x) {sum(x)}) # test across all polygons in the SpatialPolygon whether it intersects or not
   old_geom_sub3 <- old_geom[old_geom_sub2 > 0,] # keep only the ones that actually intersect
   # perform the intersection. This takes a while since it also calculates area and other things, which is why we trimmed out irrelevant areas first
 
-  int <- rgeos::gIntersection(old_geom_sub3, new_geom, byid=TRUE, drop_lower_td = TRUE) # intersect the polygon and your administrative boundaries
+  int <- gIntersection(old_geom_sub3, new_geom, byid=TRUE, drop_lower_td = TRUE) # intersect the polygon and your administrative boundaries
 
   intdf <- data.frame(intname = names(int)) # make a data frame for the intersected SpatialPolygon, using names from the output list from int
   intdf$intname <- as.character(intdf$intname) # convert the name to character

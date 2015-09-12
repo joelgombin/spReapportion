@@ -23,7 +23,7 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   # if several polygons with the same ID, merge them
   if (length(old_geom@data[,old_ID]) > length(unique(old_geom@data[,old_ID]))) {
     df <- old_geom@data[match(unique(old_geom@data[,old_ID]),old_geom@data[,old_ID]),]
-    old_geom <- maptoools::unionSpatialPolygons(old_geom, old_geom@data[,old_ID])
+    old_geom <- maptools::unionSpatialPolygons(old_geom, old_geom@data[,old_ID])
     old_geom <- SpatialPolygonsDataFrame(old_geom, df, old_ID)
   }
   if (length(new_geom@data[,new_ID]) > length(unique(new_geom@data[,new_ID]))) {

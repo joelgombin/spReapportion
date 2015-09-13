@@ -5,7 +5,7 @@ This (very small) package provides a function to reapportionate data from one se
 
 At the moment, the package only offers the option to reapportion data by hypothesising homogeneous repartition of the variable inside a unit. I have plans to implement other schemes in the future. If you are aware of some alternative schemes, please [submit an issue](https://github.com/joelgombin/spReapportion/issues).
 
-Also, for the time being, the agregation function being used is the sum, but I plan to allow for more agregation functions (possibly personalised). However, the pckage allows for dealing with proportions (only in the 0-1 range; if your proportions are expressed in the 0-100 range, please transform them) rather than counts: simply use the `mode="proportion"` argument, and don't forget to include weights with the `weights` argument (usually the total number of observations per unit).
+Also, for the time being, the agregation function being used is the sum, but I plan to allow for more agregation functions (possibly personalised). However, the package allows for dealing with proportions (only in the 0-1 range; if your proportions are expressed in the 0-100 range, please transform them) rather than counts: simply use the `mode="proportion"` argument, and don't forget to include weights with the `weights` argument (usually the total number of observations per unit).
 
 Installation
 ============

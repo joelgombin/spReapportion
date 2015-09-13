@@ -10,3 +10,5 @@ LazyData: TRUE
 Depends: R (>= 2.10), sp, maptools, rgeos
 Imports: plyr
 Suggests: testthat
+URL: https://github.com/joelgombin/spReapportion
+BugReports: https://github.com/joelgombin/spReapportion/issues

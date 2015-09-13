@@ -8,5 +8,5 @@ Description: This package provides tools to reapportion data from one geography 
 License: GPL
 LazyData: TRUE
 Depends: R (>= 2.10), sp, maptools, rgeos
-Imports: sp, rgeos, maptools, plyr
+Imports: rgeos, plyr
 Suggests: testthat

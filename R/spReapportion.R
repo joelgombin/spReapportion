@@ -64,7 +64,7 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   intdf2 <- plyr::join(intdf, data, by="old_ID") # join together the two dataframes by the administrative ID
   intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))
 
-  intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon
+  intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon
 
   names(intpop)[-1] <- variables
   names(intpop)[1] <- new_ID

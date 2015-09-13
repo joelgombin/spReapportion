@@ -5,6 +5,8 @@ This (very small) package provides a function to reapportionate data from one se
 
 At the moment, the package only offers the option to reapportion data by hypothesising homogeneous repartition of the variable inside a unit. I have plans to implement other schemes in the future. If you are aware of some alternative schemes, please [submit an issue](https://github.com/joelgombin/spReapportion/issues).
 
+Also, for the time being, the agregation function being used is the sum, but I plan to allow for more agregation functions (possibly personalised).
+
 Installation
 ============
 
@@ -21,6 +23,14 @@ There is only one function for the time being in this package. The usage is as s
 
 ``` r
 library(spReapportion)
+#> Loading required package: sp
+#> Loading required package: maptools
+#> Checking rgeos availability: TRUE
+#> Loading required package: rgeos
+#> rgeos version: 0.3-12, (SVN revision 498)
+#>  GEOS runtime version: 3.4.2-CAPI-1.8.2 r3921 
+#>  Linking to sp version: 1.1-1 
+#>  Polygon checking: TRUE
 data(ParisPollingStations2012)
 data(ParisIris)
 data(RP_2011_CS8_Paris)
@@ -31,7 +41,6 @@ You can then make sure that everything went fine, for example by comparing maps 
 
 ``` r
 library(tmap)
-#> Loading required package: sp
 #> Loading required package: raster
 library(dplyr)
 #> 
@@ -40,6 +49,10 @@ library(dplyr)
 #> The following objects are masked from 'package:raster':
 #> 
 #>     intersect, select, union
+#> 
+#> The following objects are masked from 'package:rgeos':
+#> 
+#>     intersect, setdiff, union
 #> 
 #> The following objects are masked from 'package:stats':
 #> 

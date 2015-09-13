@@ -1210,7 +1210,7 @@
   .. .. ..@ projargs: chr "+proj=lcc +lat_1=44 +lat_2=49 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +units=m +no_defs"
 }}
 \source{
-\href{http://opendata.paris.fr/explore/dataset/zones-de-rattachement-des-bureaux-de-vote-en-2012/?tab=table}{Paris city}
+[Paris city](http://opendata.paris.fr/explore/dataset/zones-de-rattachement-des-bureaux-de-vote-en-2012/?tab=table)
 }
 \usage{
 ParisPollingStations2012

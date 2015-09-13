@@ -17,7 +17,7 @@
  $ C11_POP15P_CS8: int  132 24 99 1 0 0 274 217 282 302 ...
 }}
 \source{
-\href{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=infra-population-11}{INSEE}
+[INSEE](http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=infra-population-11)
 }
 \usage{
 RP_2011_CS8_Paris

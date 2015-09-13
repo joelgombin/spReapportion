@@ -1212,7 +1212,7 @@
   .. .. ..@ projargs: chr "+proj=lcc +lat_1=44 +lat_2=49 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +units=m +no_defs"
 }}
 \source{
-\href{http://professionnels.ign.fr/contoursiris}{IGN}
+[IGN](http://professionnels.ign.fr/contoursiris)
 }
 \usage{
 ParisIris

@@ -1,7 +1,7 @@
 Package: spReapportion
 Type: Package
 Title: Reapportion Data From one Geography to Another
-Version: 0.1.0
+Version: 0.1.0.9000
 Author: Joel Gombin
 Maintainer: Joel Gombin <joel.gombin@gmail.com>
 Description: This package provides tools to reapportion data from one geography to another, for example in the context of working with different administrative units.

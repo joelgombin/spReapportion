@@ -5,7 +5,8 @@
 \title{Reapportion data from one geography to another}
 \usage{
 spReapportion(old_geom, new_geom, data, old_ID, new_ID, data_ID,
-  variables = names(data)[-which(names(data) \%in\% data_ID)])
+  variables = names(data)[-which(names(data) \%in\% data_ID)],
+  mode = "count", weights = NULL)
 }
 \arguments{
 \item{old_geom}{a \code{SpatialPolygonsDataFrame} representing the initial geometry.}
@@ -21,6 +22,10 @@ spReapportion(old_geom, new_geom, data, old_ID, new_ID, data_ID,
 \item{data_ID}{a string, the name of the ID variable in the \code{data}.}
 
 \item{variables}{a character vector, representing the names of the variables in the \code{data} set to reapportion. By default, all data variables except for the ID.}
+
+\item{mode}{either \code{"count"} or \code{"proportion"}. \code{"count"} is for absolute values, \code{"proportion"} is for, well, proportions (expressed between 0 and 1). If \code{"proportion"}, you need to provide a weights variable.}
+
+\item{weights}{In case the variables are proportions, the name of the variable containing weights (i.e. the total number of observations per unit in the \code{old_geom}).}
 }
 \description{
 This function allows to reapportion data from one geography to another, for example in the context of working with different administrative units.

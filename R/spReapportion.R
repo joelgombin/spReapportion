@@ -10,14 +10,21 @@
 #' @param new_ID a string, the name of the ID variable in the `new_geom`.
 #' @param data_ID a string, the name of the ID variable in the `data`.
 #' @param variables a character vector, representing the names of the variables in the `data` set to reapportion. By default, all data variables except for the ID.
+#' @param mode either `"count"` or `"proportion"`. `"count"` is for absolute values, `"proportion"` is for, well, proportions (expressed between 0 and 1). If `"proportion"`, you need to provide a weights variable.
+#' @param weights In case the variables are proportions, the name of the variable containing weights (i.e. the total number of observations per unit in the `old_geom`).
 #' @export
 #' @import sp maptools rgeos
 #'
-spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)]) {
+spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)], mode = "count", weights = NULL) {
 
   if (!(old_ID %in% names(old_geom@data))) stop(paste(old_ID, "is not a variable from", deparse(substitute(old_geom)),"!", sep=" "))
   if (!(new_ID %in% names(new_geom@data))) stop(paste(new_ID, "is not a variable from", deparse(substitute(new_geom)),"!", sep=" "))
   if (sum(!(variables %in% names(data))) > 0) stop(paste(variables[!(variables %in% names(data))], "is not a variable from", deparse(substitute(data)),"!",sep=" "))
+  if (mode %in% "proportion" & is.null(weights)) stop("When mode = 'proportion', you must provide weights.")
+  if (mode %in% "proportion")
+    if (!(weights %in% names(data)))
+      stop(paste0(weights, " is not a variable from ", deparse(substitute(data)), "!"))
+
 
 
   # if several polygons with the same ID, merge them
@@ -62,11 +69,21 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   intdf$polyarea <- sapply(int@polygons, function(x) {x@area}) # get area from the polygon SP object and put it in the df
   data$departarea <- sapply(old_geom@polygons, function(x) {x@area})[match(data$old_ID, old_geom@data[, old_ID])]
   intdf2 <- plyr::join(intdf, data, by="old_ID") # join together the two dataframes by the administrative ID
-  intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))
+  if (mode %in% "count") {
+    intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))
+    intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon
+    names(intpop)[-1] <- variables
+  } else {
+    intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]) * intdf2[,weights])
+    intdf2$weights <- intdf2[,weights] * (intdf2$polyarea / intdf2$departarea)
+    intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,c(paste(variables,"inpoly",sep=""), "weights")]))}) # sum population lying within each polygon
+    intpop[,paste0(variables, "inpoly")] <- intpop[,paste0(variables, "inpoly")] / intpop$weights
+    names(intpop)[-c(1, length(names(intpop)))] <- variables
+    names(intpop)[length(names(intpop))] <- weights
+  }
 
-  intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon
 
-  names(intpop)[-1] <- variables
+
   names(intpop)[1] <- new_ID
   return(intpop) # done!
 }

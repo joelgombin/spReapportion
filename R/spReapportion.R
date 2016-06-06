@@ -73,7 +73,7 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   # now you have a dataframe corresponding to the intersected SpatialPolygon object
 
   intdf$polyarea <- gArea(int, byid = TRUE) # get area from the polygon SP object and put it in the df
-  data$departarea <- sapply(old_geom@polygons, function(x) {x@area})[match(data$old_ID, old_geom@data[, old_ID])]
+  data$departarea <- gArea(old_geom, byid = TRUE)[match(data$old_ID, old_geom@data[, old_ID])]
   intdf2 <- plyr::join(intdf, data, by="old_ID") # join together the two dataframes by the administrative ID
   if (mode %in% "count") {
     intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))

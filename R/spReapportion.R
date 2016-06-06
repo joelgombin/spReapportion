@@ -45,6 +45,12 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
 
   names(data)[names(data) %in% data_ID] <- "old_ID"
 
+  # make sure both SPDFs have the same projection
+  if (!identicalCRS(old_geom, new_geom)) {
+    message("Reprojecting new_geom to the same projection as old_geom...")
+    new_geom <- spTransform(new_geom, old_geom@proj4string)
+  }
+
   # start by trimming out areas that don't intersect
 
   old_geom_sub <- rgeos::gIntersects(old_geom, new_geom, byid=TRUE) # test for areas that don't intersect

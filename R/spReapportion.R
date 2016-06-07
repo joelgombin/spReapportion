@@ -12,10 +12,12 @@
 #' @param variables a character vector, representing the names of the variables in the `data` set to reapportion. By default, all data variables except for the ID.
 #' @param mode either `"count"` or `"proportion"`. `"count"` is for absolute values, `"proportion"` is for, well, proportions (expressed between 0 and 1). If `"proportion"`, you need to provide a weights variable.
 #' @param weights In case the variables are proportions, the name of the variable containing weights (i.e. the total number of observations per unit in the `old_geom`).
+#' @param weight_matrix a SpatialPointsDataFrame indicating where are the observations (inhabitants, voters, etc.) (optional).
+#' @param weight_matrix_var the name of the variable in \code{weight_matrix} containing the weights.
 #' @export
-#' @import sp maptools rgeos
+#' @import sp maptools rgeos purrr
 #'
-spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)], mode = "count", weights = NULL) {
+spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, variables = names(data)[-which(names(data) %in% data_ID)], mode = "count", weights = NULL, weight_matrix = NULL, weight_matrix_var = NULL) {
 
   if (!(old_ID %in% names(old_geom@data))) stop(paste(old_ID, "is not a variable from", deparse(substitute(old_geom)),"!", sep=" "))
   if (!(new_ID %in% names(new_geom@data))) stop(paste(new_ID, "is not a variable from", deparse(substitute(new_geom)),"!", sep=" "))
@@ -24,6 +26,8 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   if (mode %in% "proportion")
     if (!(weights %in% names(data)))
       stop(paste0(weights, " is not a variable from ", deparse(substitute(data)), "!"))
+  if (!inherits(weight_matrix, "SpatialPointsDataFrame", which = FALSE))
+    stop("The weight_matrix argument is not a SpatialPointsDataFrame!")
 
 
 
@@ -51,14 +55,22 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
     new_geom <- spTransform(new_geom, old_geom@proj4string)
   }
 
+  # use weight matrix if provided
+  if (!is.null(weight_matrix)) {
+    weight_matrix <- weight_matrix[colSums(gWithin(weight_matrix, old_geom, byid = TRUE)) > 0,]
+    weight_matrix_total <- sum(weight_matrix@data[, weight_matrix_var], na.rm = TRUE)
+    weight_matrix@data <- cbind(weight_matrix@data, over(weight_matrix, old_geom))
+  }
+
+
   # start by trimming out areas that don't intersect
 
-  old_geom_sub <- rgeos::gIntersects(old_geom, new_geom, byid=TRUE) # test for areas that don't intersect
+  old_geom_sub <- rgeos::gIntersects(old_geom, new_geom, byid = TRUE) # test for areas that don't intersect
   old_geom_sub2 <- apply(old_geom_sub, 2, function(x) {sum(x)}) # test across all polygons in the SpatialPolygon whether it intersects or not
   old_geom_sub3 <- old_geom[old_geom_sub2 > 0,] # keep only the ones that actually intersect
-  # perform the intersection. This takes a while since it also calculates area and other things, which is why we trimmed out irrelevant areas first
 
-  int <- rgeos::gIntersection(old_geom_sub3, new_geom, byid=TRUE, drop_lower_td = TRUE) # intersect the polygon and your administrative boundaries
+  # perform the intersection. This takes a while since it also calculates area and other things, which is why we trimmed out irrelevant areas first
+  int <- rgeos::gIntersection(old_geom_sub3, new_geom, byid = TRUE, drop_lower_td = TRUE) # intersect the polygon and your administrative boundaries
 
   intdf <- data.frame(intname = names(int)) # make a data frame for the intersected SpatialPolygon, using names from the output list from int
   intdf$intname <- as.character(intdf$intname) # convert the name to character
@@ -72,9 +84,19 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
 
   # now you have a dataframe corresponding to the intersected SpatialPolygon object
 
-  intdf$polyarea <- gArea(int, byid = TRUE) # get area from the polygon SP object and put it in the df
-  data$departarea <- gArea(old_geom, byid = TRUE)[match(data$old_ID, old_geom@data[, old_ID])]
-  intdf2 <- plyr::join(intdf, data, by="old_ID") # join together the two dataframes by the administrative ID
+  if (!is.null(weight_matrix)) {
+    # check in which intersected polygon each point stands
+    weight_matrix_int <- over(weight_matrix, int)
+    # use points weights to reapportion
+    intdf$polyarea <- map_int(1:length(int), ~ sum(weight_matrix@data[weight_matrix_int %in% .x, "n"]))
+    data$departarea <- map_int(old_geom@data[, old_ID], ~ sum(weight_matrix@data[weight_matrix@data[, old_ID] %in% .x, weight_matrix_var]))[match(data$old_ID, old_geom@data[, old_ID])]
+  } else {
+    # if we don't have weights we just use areas
+    intdf$polyarea <- gArea(int, byid = TRUE) # get area from the polygon SP object and put it in the df
+    data$departarea <- gArea(old_geom, byid = TRUE)[match(data$old_ID, old_geom@data[, old_ID])]
+  }
+
+  intdf2 <- plyr::join(intdf, data, by = "old_ID") # join together the two dataframes by the administrative ID
   if (mode %in% "count") {
     intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))
     intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon

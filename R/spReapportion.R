@@ -26,7 +26,7 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
   if (mode %in% "proportion")
     if (!(weights %in% names(data)))
       stop(paste0(weights, " is not a variable from ", deparse(substitute(data)), "!"))
-  if (!inherits(weight_matrix, "SpatialPointsDataFrame", which = FALSE))
+  if (!is.null(weight_matrix) & !inherits(weight_matrix, "SpatialPointsDataFrame", which = FALSE))
     stop("The weight_matrix argument is not a SpatialPointsDataFrame!")
 
 

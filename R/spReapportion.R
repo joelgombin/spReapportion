@@ -83,12 +83,14 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
     weight_matrix_int <- over(weight_matrix, int)
     # use points weights to reapportion
     intdf$polyarea <- map_int(1:length(int), ~ sum(weight_matrix@data[weight_matrix_int %in% .x, "n"]))
+    data$departarea <- map_int(old_geom@data[, old_ID], ~ sum(weight_matrix@data[weight_matrix@data[, old_ID] %in% .x, weight_matrix_var]))[match(data$old_ID, old_geom@data[, old_ID])]
   } else {
     # if we don't have weights we just use areas
     intdf$polyarea <- gArea(int, byid = TRUE) # get area from the polygon SP object and put it in the df
+    data$departarea <- gArea(old_geom, byid = TRUE)[match(data$old_ID, old_geom@data[, old_ID])]
   }
-  data$departarea <- sapply(old_geom@polygons, function(x) {x@area})[match(data$old_ID, old_geom@data[, old_ID])]
-  intdf2 <- plyr::join(intdf, data, by="old_ID") # join together the two dataframes by the administrative ID
+
+  intdf2 <- plyr::join(intdf, data, by = "old_ID") # join together the two dataframes by the administrative ID
   if (mode %in% "count") {
     intdf2[,paste(variables,"inpoly",sep="")] <- plyr::numcolwise(function(x) {x * (intdf2$polyarea / intdf2$departarea)})(as.data.frame(intdf2[,variables]))
     intpop <- plyr::ddply(intdf2, "new_ID", function(x) {plyr::numcolwise(sum, na.rm = TRUE)(as.data.frame(x[,paste(variables,"inpoly",sep="")]))}) # sum population lying within each polygon

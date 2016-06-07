@@ -2,5 +2,5 @@
 
 - add other aggregation function (mean etc.)
 - parallelise?
-- add possibility to include a weight matrix 
+- add test and README exemple for the weight matrix
 - vignette

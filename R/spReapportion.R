@@ -57,6 +57,9 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
 
   # use weight matrix if provided
   if (!is.null(weight_matrix)) {
+    if (old_ID %in% names(weight_matrix@data)) {
+      weight_matrix@data <- weight_matrix@data[, -match(old_ID, names(weight_matrix@data))]
+    }
     weight_matrix <- weight_matrix[colSums(gWithin(weight_matrix, old_geom, byid = TRUE)) > 0,]
     weight_matrix_total <- sum(weight_matrix@data[, weight_matrix_var], na.rm = TRUE)
     weight_matrix@data <- cbind(weight_matrix@data, over(weight_matrix, old_geom))

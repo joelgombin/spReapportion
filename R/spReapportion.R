@@ -88,7 +88,7 @@ spReapportion <- function(old_geom, new_geom, data, old_ID, new_ID, data_ID, var
     # check in which intersected polygon each point stands
     weight_matrix_int <- over(weight_matrix, int)
     # use points weights to reapportion
-    intdf$polyarea <- map_int(1:length(int), ~ sum(weight_matrix@data[weight_matrix_int %in% .x, "n"]))
+    intdf$polyarea <- map_int(1:length(int), ~ sum(weight_matrix@data[weight_matrix_int %in% .x, weight_matrix_var]))
     data$departarea <- map_int(old_geom@data[, old_ID], ~ sum(weight_matrix@data[weight_matrix@data[, old_ID] %in% .x, weight_matrix_var]))[match(data[["old_ID"]], old_geom@data[[old_ID]])]
   } else {
     # if we don't have weights we just use areas
